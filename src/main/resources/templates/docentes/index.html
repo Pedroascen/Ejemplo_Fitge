@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:include="/layouts/layout::plantilla">
+<head>
+<title th:fragment="titulo" >Docentes</title>
+</head>
+<body class="container" th:fragment="content">
+	<a name="nuevo" id="nuevo" class="btn btn-primary mt-4" href="/docente/guardar" role="button">Nuevo</a> <br>
+	<h1 class="text-center mt-2 mb-2">Datos de docentes.</h1> <br>
+	<h1 th:if="${items.size()==0}">No hay datos para mostrar</h1>	
+	<table class="table" th:if="${items.size()>0}" id="datos" >
+		<thead>
+			<tr> 
+				<th>Id</th>
+				<th>Nombre</th>
+				<th>Especialidad</th>
+				<th>Operaciones</th>
+			</tr>
+		</thead>
+		<tbody>
+		<!-- Estructira repetitiva para recorrer el listado que viene en
+		variable 'items', esta el el foreach -->
+			<tr th:each="i : ${items}">
+				<td th:text="${i.id}"></td>
+				<td th:text="${i.nombre}"></td>
+				<td th:text="${i.especialidad.especialidad}"></td>
+				<td>
+					<a name="modificar" id="modificar" class="btn btn-warning" th:href="@{'/docente/modificar/' + ${i.id}}" role="button">Modificar</a>
+					<a name="eliminar" id="eliminar" class="btn btn-danger" th:href="@{'/docente/eliminar/' + ${i.id}}"  role="button">Eliminar</a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>

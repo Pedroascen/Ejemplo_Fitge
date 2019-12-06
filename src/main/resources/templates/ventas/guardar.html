@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+th:include="/layouts/layout::plantilla">
+    <head>
+            <title th:fragment="titulo">Ventas Guardar</title>
+    </head>
+    <body th:fragment="content">
+        <div class="container">
+         <h6 class="text-center mt-2">Venta</h6>
+            <form>
+                <div class="form-group row">
+                    <label for="inputName" class="col-sm-1 col-form-label">Fecha</label>
+                    <div class="col-sm-11">
+                        <input type="date" class="form-control" name="fecha" id="fecha" >
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputName" class="col-sm-1 col-form-label">cliente</label>
+                    <div class="col-sm-10">
+                     
+                        <input th:if="@{${cliente}!=null}" th:value="${cliente.nombre}"  type="text" class="form-control" name="cliente" id="cliente"  readonly="readonly">
+                        <input th:if="@{${cliente}==null}"   type="text" class="form-control" name="cliente" id="cliente"  readonly="readonly">
+                       
+                    </div>
+                    <button id="buscarClientes" type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalCliente">
+                            Buscar
+                    </button>
+                            
+                </div>
+                <hr>
+                <h6 class="text-center">Detalles de la venta</h6>
+                <div class="form-group row">
+                         <div class="col-sm-3">
+                            <input type="number" class="form-control" name="cantidad" id="cantidad" placeholder="Cantidad" >
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" name="producto" id="producto"  readonly="readonly">
+                        </div>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalProducto">
+                                Buscar
+                        </button>
+                         <input name="agregarDetalle" id="agregarDetalle" class="btn btn-success ml-1 " type="button" value="Agregar">
+                 </div>
+
+                 <table class="table" id="detalles">
+                     <thead >
+                         <tr>
+                             <th>#</th>
+                             <th>Producto</th>
+                             <th>Precio</th>
+                             <th>Total</th>
+                             <th>Operaciones</th>
+                         </tr>
+                         </thead>
+                         <tbody id="tDetalles">
+                        </tbody>
+                 </table>
+
+                 <button type="button" id="guardarVenta" class="btn btn-primary">Guardar</button>
+                </form>
+                 <!--Modales-->
+                 <!--  Modal Para seleccionar cliente-->
+                    <!-- The Modal -->
+                    <div class="modal fade" id="ModalCliente">
+                            <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                            
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                <h4 class="modal-title">Listado de clientes</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                
+                                <!-- Modal body -->
+                                <div class="modal-body">
+                                    <table class="table table-hover"  id="datos">
+                                            <thead>
+                                                <tr>
+                                                        <th>ID</th>
+                                                        <th>Nombre</th>
+                                                        <th>Telefono</th>
+                                                        <th>Direccion</th>
+                                                        <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="datosClientes">
+                                                <tr th:each="item2 : ${clientes}">
+                                                    <td th:text="${item2.id}"></td>
+                                                    <td th:text="${item2.nombre}"></td>
+                                                    <td th:text="${item2.telefono}"></td>
+                                                    <td th:text="${item2.direccion}"></td>
+                                                    <td>    
+                                                        <button   class="btn btn-primary agregarCliente"  data-dismiss="modal" >Agregar</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                    </table>
+                                </div>
+                                
+                                <!-- Modal footer -->
+                                <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                </div>
+                                
+                            </div>
+                            </div>
+                        </div>
+                     <!--  Modal Para seleccionar producto-->
+                    <!-- The Modal -->
+                    <div class="modal fade" id="ModalProducto">
+                            <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                            
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                <h4 class="modal-title">Listado de productos</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                
+                                <!-- Modal body -->
+                                <div class="modal-body">
+                                        <table class="table table-hover"  id="datos2">
+                                                <thead>
+                                                    <tr>
+                                                            <th>ID</th>
+                                                            <th>Nombre</th>
+                                                            <th>Precio</th>
+                                                            <th>Acciones</th>
+                                                    </tr>
+                                                   
+                                                </thead>
+                                                <tbody>
+                                                    <tr th:each="item : ${productos}">
+                                                        <td th:text="${item.id}"></td>
+                                                        <td th:text="${item.nombre}"></td>
+                                                        <td th:text="${item.precio}"></td>
+                                                        <td>
+                                                            <button  class="btn btn-primary agregarProducto"  data-dismiss="modal">Agregar</button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                        </table>
+                                </div>
+                
+                                <!-- Modal footer -->
+                                <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                                
+                            </div>
+                            </div>
+                        </div>   
+                <script>
+
+                 let cliente={id:0,nombre:"",telefono:"",direccion:""};
+                 const producto={id:0,nombre:""};
+
+                $(document).ready(function(){
+                                                                                                            
+                    $(".agregarCliente").click(function(){
+                        agregarCliente($(this).parent().parent().children('td:eq(0)').text(),$(this).parent().parent().children('td:eq(1)').text());
+                    });
+                    $(".agregarProducto").click(function(){
+                        cargarProducto($(this).parent().parent().children('td:eq(0)').text(),$(this).parent().parent().children('td:eq(1)').text());
+                    });
+
+                    $("#agregarDetalle").click(agregarProducto);
+                    
+
+                    $("#guardarVenta").click(guardar);
+
+                });
+                
+                function agregarCliente(id,nombre){
+                    cliente.id=id;
+                    cliente.nombre=nombre;
+                    $("#cliente").val(cliente.nombre);
+                }
+
+                function cargarProducto(id, nombre){
+                    producto.id=id;
+                    producto.nombre=nombre;
+                    $("#producto").val(producto.nombre);
+                }
+
+                function agregarProducto() {
+                    $.ajax({
+                        url:"/ventas/agregarDetalle",
+                        method:"Post",
+                        data:{
+                            cantidad:$("#cantidad").val(),
+                            idProducto:producto.id
+                        },
+                        success:function(response){
+                            alert("Detalle agregardo");
+                            $("#cantidad").val(0);
+                            $("#producto").val("");
+                            producto.id=0;
+                            producto.nombre="";
+                            cargarDetalles();
+                        },
+                        error:function(response){
+                         alert("NO SE AGREGO EL DETALLE");
+                        }   
+                    });
+                }
+
+                function cargarDatos(){
+                    $.ajax({
+                        method:"Get",
+                        url:"/ventas/api/clientes",
+                        success:function(data){
+                         
+                        },
+                        error:function(data){
+                           alert("Error en la peticion"); 
+                           console.log(data);
+                        }
+
+                    })
+                }
+               
+               function cargarDetalles() {
+                   $.ajax({
+                       url:"/ventas/allDetalles",
+                       method:"Get",
+                       success:function(response){
+                        $("#tDetalles").html("");
+                          response.forEach(i => {
+                                $("#tDetalles").append(""
+                                +"<tr>"
+                                    +"<td>"+i.cantidad+"</td>"
+                                    +"<td>"+i.producto.nombre+"</td>"
+                                    +"<td>$"+i.producto.precio+"</td>"
+                                    +"<td>$"+(i.producto.precio*i.cantidad)+"</td>"
+                                +"</tr>"
+                                +"");      
+                          });
+                       },
+                       error:function(response){
+
+                        }
+                   });
+               }
+
+               function guardar() {
+                   $.ajax({
+                        url:"/ventas/save",
+                        method:"Post",
+                        data:{
+                            fecha:$("#fecha").val(),
+                            idCliente:cliente.id
+                        },
+                        success:function(response){
+                            alert("VENTA GUARDADA CORRECTAMENTE...");
+                            location.reload();
+                        },
+                        error:function(response){
+                            alert("VENTA NO GUARDADA ...");
+                        }
+
+                   });
+               }
+
+
+
+                </script> 
+            
+        </div>
+    </body>
+</html>
